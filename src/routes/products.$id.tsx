@@ -10,14 +10,30 @@ import { useCart } from "@/lib/cart-context";
 
 const SITE_URL = "https://bag-store-olive.vercel.app";
 
-function getOgImageUrl(image?: string) {
-  console.log("image ss", image)
-  if (!image.url) return `${SITE_URL}/favicon-96x96.png`;
-  if (image.url.startsWith("http://") || image.url.startsWith("https://")) return image.url;
-  if (image.url.startsWith("/")) return `${SITE_URL}${image}`;
-  return `${SITE_URL}/${image}`;
-}
+// function getOgImageUrl(image?: string) {
+//   console.log("image ss", image)
+//   if (!image.url) return `${SITE_URL}/favicon-96x96.png`;
+//   if (image.url.startsWith("http://") || image.url.startsWith("https://")) return image.url;
+//   if (image.url.startsWith("/")) return `${SITE_URL}${image}`;
+//   return `${SITE_URL}/${image}`;
+// }
+// function getOgImageUrl(image?: { url: string }) {
+//   if (!image?.url) return `${SITE_URL}/favicon-96x96.png`;
+//   if (image.url.startsWith("http://") || image.url.startsWith("https://")) return image.url;
+//   if (image.url.startsWith("/")) return `${SITE_URL}${image.url}`;
+//   return `${SITE_URL}/${image.url}`;
+// }
+function getOgImageUrl(image?: { url: string }) {
+  const fallback = `${SITE_URL}/favicon-96x96.png`;
+  if (!image?.url) return fallback;
 
+  const raw = image.url.startsWith("http")
+    ? image.url
+    : `${SITE_URL}${image.url.startsWith("/") ? "" : "/"}${image.url}`;
+
+  // Pad the image into a clean 1200x630 canvas with white background
+  return `https://wsrv.nl/?url=${encodeURIComponent(raw)}&w=1200&h=630&fit=contain&bg=white`;
+}
 export const Route = createFileRoute("/products/$id")({
   head: async ({ params }) => {
     const product = await fetchProduct(params.id);
@@ -97,6 +113,27 @@ function ProductDetailPage() {
       </button>
 
       <div className="grid gap-10 md:grid-cols-2">
+        {/* <div className="overflow-hidden rounded-3xl border border-border/60 bg-muted">
+          {img ? (
+            <div className="aspect-square overflow-hidden rounded-3xl border border-border/60 bg-white flex items-center justify-center">
+              <img
+                src={img?.url}
+                alt={product.name}
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            // <img
+            //   src={img?.url}
+            //   alt={product.name}
+            //   className="aspect-square w-full object-cover"
+            // />
+          ) : (
+            <div className="flex aspect-square items-center justify-center text-sm text-muted-foreground">
+              No image
+            </div>
+          )}
+        </div> */}
+
         <div className="overflow-hidden rounded-3xl border border-border/60 bg-muted">
           {img ? (
             <div className="aspect-square overflow-hidden rounded-3xl border border-border/60 bg-white flex items-center justify-center">
@@ -117,7 +154,6 @@ function ProductDetailPage() {
             </div>
           )}
         </div>
-
         <div className="flex flex-col">
           {product.category && (
             <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold">
