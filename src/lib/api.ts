@@ -153,7 +153,7 @@ export async function fetchFeatureProducts(params?: {
   if (params?.page) qs.set("page", String(params.page));
   if (params?.limit) qs.set("limit", String(params.limit));
   const q = qs.toString();
-  const res = await apiRequest(`section/get/${q ? `?${q}` : ""}`, { auth: true });
+  const res = await apiRequest(`section/get/${TENANT_ID}/${q ? `?${q}` : ""}`, { auth: true });
   const list = pick<Product[]>(res, ["products", "items"]);
   return Array.isArray(list) ? list : [];
 }
