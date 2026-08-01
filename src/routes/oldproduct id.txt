@@ -8,41 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCart } from "@/lib/cart-context";
 
-const SITE_URL = "https://bag-store-olive.vercel.app";
-
-function getOgImageUrl(image?: string) {
-  console.log("image ss", image)
-  if (!image.url) return `${SITE_URL}/favicon-96x96.png`;
-  if (image.url.startsWith("http://") || image.url.startsWith("https://")) return image.url;
-  if (image.url.startsWith("/")) return `${SITE_URL}${image}`;
-  return `${SITE_URL}/${image}`;
-}
-
 export const Route = createFileRoute("/products/$id")({
-  head: async ({ params }) => {
-    const product = await fetchProduct(params.id);
-    const title = product ? `${product.name} — Carryon` : "Carryon — Premium Laptop Bags";
-    const description = product?.description
-      ? product.description
-      : "Shop premium laptop bags — backpacks, sleeves and briefcases engineered for professionals.";
-    const image = getOgImageUrl(primaryImage(product || { _id: params.id, name: "", price: 0 } as any) || "/favicon-96x96.png");
-
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-        { property: "og:type", content: "product" },
-        { property: "og:url", content: `${SITE_URL}/products/${params.id}` },
-        { property: "og:image", content: image },
-        { property: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: description },
-        { name: "twitter:image", content: image },
-      ],
-    };
-  },
   component: ProductDetailPage,
 });
 
